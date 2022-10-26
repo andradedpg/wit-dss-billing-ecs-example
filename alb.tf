@@ -12,6 +12,12 @@ resource "aws_lb" "loadbalancer" {
       "Name"    = "${var.PROJECT}-ALB"
     }
   )
+
+  depends_on = [
+    aws_vpc.vpc, 
+    aws_autoscaling_group.ecs_asg_ondemand_group,
+    aws_autoscaling_group.ecs_asg_spot_group
+  ]
 }
 
 resource "aws_lb_target_group" "target_group_http" {

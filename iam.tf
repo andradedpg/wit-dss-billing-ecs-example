@@ -1,5 +1,5 @@
 resource "aws_iam_role" "ecs_ec2_instance_role" {
-  name = "imagine-ecs-${var.PROJECT}-${var.ENVIRONMENT}-ec2-instance-role"
+  name = "ecs-${var.PROJECT}-${var.ENVIRONMENT}-ec2-instance-role"
   path = "/"
 
   assume_role_policy = <<EOF
@@ -17,9 +17,28 @@ resource "aws_iam_role" "ecs_ec2_instance_role" {
 }
 EOF
 }
+resource "aws_iam_role" "ecs_task_service_role" {
+  name = "ecs-${var.PROJECT}-${var.ENVIRONMENT}-task-service-role"
+  path = "/"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "sts:AssumeRole",
+            "Principal": {
+               "Service": "ecs.amazonaws.com"
+            },
+            "Effect": "Allow"
+        }
+    ]
+}
+EOF
+}
 
 resource "aws_iam_policy" "ecs_ec2_instance_role_policy" {
-  name        = "imagine-ecs-${var.PROJECT}-${var.ENVIRONMENT}-ec2-instance-role-policy"
+  name        = "ecs-${var.PROJECT}-${var.ENVIRONMENT}-ec2-instance-role-policy"
   path        = "/"
   description = "Policy for ECS EC2 Nodes"
 
@@ -63,8 +82,12 @@ resource "aws_iam_role_policy_attachment" "ecs_ec2_instance_role_policy_attachme
   role       = aws_iam_role.ecs_ec2_instance_role.name
   policy_arn = aws_iam_policy.ecs_ec2_instance_role_policy.arn
 }
+resource "aws_iam_role_policy_attachment" "ecs_ec2_task_service_policy_attachment" {
+  role       = aws_iam_role.ecs_task_service_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"
+}
 
 resource "aws_iam_instance_profile" "ecs_ec2_instance_profile" {
-  name = "imagine-ecs-${var.PROJECT}-${var.ENVIRONMENT}-ec2-instance-profile"
+  name = "ecs-${var.PROJECT}-${var.ENVIRONMENT}-ec2-instance-profile"
   role = aws_iam_role.ecs_ec2_instance_role.name
 }

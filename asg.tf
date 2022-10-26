@@ -31,6 +31,10 @@ resource "aws_autoscaling_group" "ecs_asg_spot_group" {
     value               = true
     propagate_at_launch = true
   }
+
+  lifecycle {
+    ignore_changes = [target_group_arns]
+  }
 }
 
 resource "aws_autoscaling_group" "ecs_asg_ondemand_group" {
@@ -62,5 +66,9 @@ resource "aws_autoscaling_group" "ecs_asg_ondemand_group" {
     key                 = "AmazonEC2Managed"
     value               = true
     propagate_at_launch = true
+  }
+
+  lifecycle {
+    ignore_changes = [target_group_arns]
   }
 }

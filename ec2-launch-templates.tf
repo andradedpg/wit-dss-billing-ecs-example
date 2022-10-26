@@ -53,13 +53,18 @@ resource "aws_launch_template" "cluster_ec2_spot_config" {
   }
 
   depends_on = [
-    aws_vpc.vpc
+    aws_vpc.vpc, 
+    aws_ecs_cluster.cluster
   ]
 
   user_data = base64encode(templatefile("${path.module}/utils/workernode-userdata.tpl", {
     LAUNCHTIME         = "${timestamp()}",
     ECS_CLUSTER_NAME   = "${aws_ecs_cluster.cluster.name}"
   }))
+
+  lifecycle {
+    ignore_changes = [user_data]
+  }
 }
 
 resource "aws_launch_template" "cluster_ec2_ondemand_config" {
@@ -106,11 +111,16 @@ resource "aws_launch_template" "cluster_ec2_ondemand_config" {
   }
 
   depends_on = [
-    aws_vpc.vpc
+    aws_vpc.vpc,
+    aws_ecs_cluster.cluster
   ]
 
   user_data = base64encode(templatefile("${path.module}/utils/workernode-userdata.tpl", {
     LAUNCHTIME         = "${timestamp()}",
     ECS_CLUSTER_NAME   = "${aws_ecs_cluster.cluster.name}"
   }))
+
+  lifecycle {
+    ignore_changes = [user_data]
+  }
 }

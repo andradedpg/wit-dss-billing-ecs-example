@@ -8,6 +8,7 @@ resource "aws_ecs_cluster" "cluster" {
       "Name"    = "${var.PROJECT}-ECS Cluster"
     }
   )
+
 }
 
 # resource "aws_ecs_cluster_capacity_providers" "cluster_capacities" {

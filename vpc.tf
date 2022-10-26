@@ -196,4 +196,8 @@ resource "aws_default_network_acl" "nacl_default" {
     }
   )
 
+  lifecycle {
+    ignore_changes = [subnet_ids]
+  }
+
 }
